@@ -2,8 +2,7 @@ import express from "express";
 import Agence from "../models/Agence.js"
 import asyncWrapper from "../middleware/async.js";
 import { createCustomError } from "../errors/custom-error.js"
-
-const router = express.Router();
+import { StatusCodes } from "http-status-codes";
 
 //GET
 export const getAgence = asyncWrapper(async (req, res, next) => {
@@ -11,7 +10,7 @@ export const getAgence = asyncWrapper(async (req, res, next) => {
     const agence = await Agence.findOne({ _id: agenceID });
 
     if (!agence) {
-        return next(createCustomError(`No task with id: ${agenceID}`, 404))
+        return next(createCustomError(`No agence with id: ${agenceID}`, 404))
     }
 
     res.status(200).json({ agence })
@@ -41,10 +40,10 @@ export const updateAgence = asyncWrapper(async (req, res, next) => {
     })
 
     if (!agence) {
-        return next(createCustomError(`No task with id : ${agenceId}`, 404))
+        return next(createCustomError(`No agence with id : ${agenceId}`, 404))
     }
 
-    res.status(200).json({ agence })
+    res.status(StatusCodes.OK).json({ agence })
 })
 //DELETE
 
