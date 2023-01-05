@@ -56,4 +56,16 @@ export const deleteAgence = asyncWrapper(async (req, res, next) => {
     }
 
     res.status(200).json({ agence })
-})
+});
+
+export const countByCity = asyncWrapper(async (req, res, next) => {
+    const cities = req.query.cities.split(",");
+
+    const list = await Promise.all(
+        cities.map((city) => {
+            return Agence.countDocuments({ city: city })
+        })
+    );
+
+    res.status(StatusCodes.OK).json(list)
+});
