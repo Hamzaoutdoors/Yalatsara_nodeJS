@@ -5,12 +5,20 @@ const TripSchema = new Schema({
         type: String,
         required: true,
     },
+    destination: {
+        type: String,
+        required: true,
+    },
     price: {
         type: Number,
         required: true
     },
-    desc: {
+    details: {
         type: String,
+        required: true,
+    },
+    featured: {
+        type: Boolean,
         required: true,
     },
     dateStart: {
@@ -21,12 +29,34 @@ const TripSchema = new Schema({
         type: Date,
         required: true,
     },
+    images: {
+        type: [String],
+        required: true,
+    },
     maxMembers: {
         type: Number,
         required: true,
+    },
+    availableSeats: {
+        type: Number,
+    },
+    agence: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Agence',
+        required: true,
+    },
+    whatsappPost: {
+        type: String,
     }
 },
-{ timestamps: true },
+    { timestamps: true },
 )
+
+TripSchema.index({agence: 1}, {unique: true});
+
+TripSchema.pre('remove', async function (next) {
+    await this.model('Reservation').deleteMany({ trip: this._id });
+});
+
 
 export default mongoose.model("Trip", TripSchema);

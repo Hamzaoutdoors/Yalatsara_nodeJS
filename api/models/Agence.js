@@ -20,6 +20,10 @@ const AgenceSchema = new Schema({
     logo: {
         type: String,
     },
+    trips: {
+        type: [String],
+        required: true,
+    },
     rating: {
         type: Number,
         min: 0,
@@ -28,9 +32,6 @@ const AgenceSchema = new Schema({
     contacts: {
         whatsapp: { type: String },
         instagram: { type: String }
-    },
-    trips: {
-        type: [String],
     },
     cheapest: {
         type: Number,
@@ -41,7 +42,12 @@ const AgenceSchema = new Schema({
         default: false
     }
 },
-    { timestamps: true },
-)
+    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
+);
+
+
+AgenceSchema.pre('remove', async function (next) {
+    await this.model('Trip').deleteMany({ agence: this._id });
+});
 
 export default mongoose.model("Agence", AgenceSchema);

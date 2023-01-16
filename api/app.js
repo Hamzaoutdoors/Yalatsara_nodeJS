@@ -5,7 +5,8 @@ import {
     authRoute,
     agencesRoute,
     tripsRoute,
-    usersRoute
+    usersRoute,
+    reservationsRoute
 } from "./routes/index.js";
 import errorHandlerMiddleware from './middleware/error-handler.js';
 import notFound from "./middleware/not-found.js";
@@ -45,6 +46,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", usersRoute);
 app.use("/api/agences", agencesRoute);
 app.use("/api/trips", tripsRoute);
+app.use("/api/reservations", reservationsRoute);
 
 
 app.use(notFound);

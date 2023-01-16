@@ -18,9 +18,14 @@ export const getAgence = asyncWrapper(async (req, res, next) => {
 
 //GET ALL
 export const getAllAgences = asyncWrapper(async (req, res) => {
-    const agences = await Agence.find({});
+    const { min, max, ...others } = req.query;
+
+    const agences = await Agence.find({
+        ...others,
+        cheapest: { $gt: min || 1, $lt: max || 999 },
+    }).limit(req.query.limit);
     res.status(200).json({ agences })
-})
+});
 
 //CREATE
 
@@ -48,17 +53,19 @@ export const updateAgence = asyncWrapper(async (req, res, next) => {
 //DELETE
 
 export const deleteAgence = asyncWrapper(async (req, res, next) => {
-    const { id: agenceID } = req.params;
-    const agence = await Agence.findByIdAndDelete({ _id: agenceID });
+    const { id: agenceId } = req.params;
+
+    const agence = await Agence.findOne({ _id: agenceId });
 
     if (!agence) {
-        return next(createCustomError(`No agence with id: ${agenceID}`, 404))
+        return next(createCustomError(`No agence with id: ${agenceId}`, StatusCodes.NOT_FOUND))
     }
 
-    res.status(200).json({ agence })
+    await agence.remove();
+    res.status(StatusCodes.OK).json({ agence })
 });
 
-export const countByCity = asyncWrapper(async (req, res, next) => {
+export const countByCity = asyncWrapper(async (req, res) => {
     const cities = req.query.cities.split(",");
 
     const list = await Promise.all(
@@ -68,4 +75,14 @@ export const countByCity = asyncWrapper(async (req, res, next) => {
     );
 
     res.status(StatusCodes.OK).json(list)
+});
+
+export const countByCat = asyncWrapper(async (req, res) => {
+    const mountCount = await Agence.countDocuments({ cat: "Mountains" });
+    const internationalCount = await Agence.countDocuments({ type: "International" });
+
+    res.status(StatusCodes.OK).json([
+        { category: "Hiking and outdoors", count: mountCount },
+        { type: "International trips", count: internationalCount },
+    ]);
 });
