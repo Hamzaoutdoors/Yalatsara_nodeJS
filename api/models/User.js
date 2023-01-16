@@ -18,10 +18,24 @@ const UserSchema = new Schema({
         ],
         unique: true
     },
+    country: {
+        type: String,
+        required: true,
+    },
+    city: {
+        type: String,
+        required: true,
+    },
+    img: {
+        type: String,
+    },
+    phone: {
+        type: String,
+        required: true,
+    },
     password: {
         type: String,
         required: true,
-        minlength: 6,
     },
     city: {
         type: String,

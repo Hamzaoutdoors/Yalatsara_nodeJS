@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const createJWT = ({payload}) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_LIFETIME,
+        expiresIn: '365d',
     });
     return token;
 }
@@ -17,3 +17,5 @@ export const attachCookiesToResponse = ({res, user}) => {
         expires: new Date(Date.now() + oneDay),
     });
 };
+
+export const isTokenValid = ({ token }) => jwt.verify(token, process.env.JWT_SECRET);
