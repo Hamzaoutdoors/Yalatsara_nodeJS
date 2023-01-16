@@ -2,8 +2,10 @@ import {
   faBed,
   faCalendarDays,
   faCar,
+  faMountain,
   faPerson,
   faPlane,
+  faRoute,
   faTaxi,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +16,9 @@ import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { searchByQuery } from "../../redux/agences/agenceSlice";
+import { searchTripsByQuery } from "../../redux/trips/tripSlice";
 
 const Header = ({ type }) => {
   const [destination, setDestination] = useState("");
@@ -29,10 +34,13 @@ const Header = ({ type }) => {
   const [options, setOptions] = useState({
     adult: 1,
     children: 0,
-    room: 1,
+    trip: 1,
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const LoggedInUser = JSON.parse(localStorage.getItem("user_data"));
 
   const handleOption = (name, operation) => {
     setOptions((prev) => {
@@ -44,7 +52,8 @@ const Header = ({ type }) => {
   };
 
   const handleSearch = () => {
-    navigate("/hotels", { state: { destination, date, options } });
+    dispatch(searchTripsByQuery({destination}));
+    navigate("/trips", {state: { destination, date, options } });
   };
 
   return (
@@ -56,8 +65,8 @@ const Header = ({ type }) => {
       >
         <div className="headerList">
           <div className="headerListItem active">
-            <FontAwesomeIcon icon={faBed} />
-            <span>Stays</span>
+            <FontAwesomeIcon icon={faMountain} />
+            <span>Trips</span>
           </div>
           <div className="headerListItem">
             <FontAwesomeIcon icon={faPlane} />
@@ -69,7 +78,7 @@ const Header = ({ type }) => {
           </div>
           <div className="headerListItem">
             <FontAwesomeIcon icon={faBed} />
-            <span>Attractions</span>
+            <span>Stays</span>
           </div>
           <div className="headerListItem">
             <FontAwesomeIcon icon={faTaxi} />
@@ -83,12 +92,13 @@ const Header = ({ type }) => {
             </h1>
             <p className="headerDesc">
               Get rewarded for your travels – unlock instant savings of 10% or
-              more with a free Lamabooking account
+              more with a free <strong>Yalatsara</strong> account
             </p>
-            <button className="headerBtn">Sign in / Register</button>
+            {!LoggedInUser && <button className="headerBtn" onClick={navigate("/login", {replace: true })}>Sign in / Register</button>}
+            
             <div className="headerSearch">
               <div className="headerSearchItem">
-                <FontAwesomeIcon icon={faBed} className="headerIcon" />
+                <FontAwesomeIcon icon={faRoute} className="headerIcon" />
                 <input
                   type="text"
                   placeholder="Where are you going?"
@@ -121,7 +131,7 @@ const Header = ({ type }) => {
                 <span
                   onClick={() => setOpenOptions(!openOptions)}
                   className="headerSearchText"
-                >{`${options.adult} adult · ${options.children} children · ${options.room} room`}</span>
+                >{`${options.adult} adult · ${options.children} children · ${options.trip} trip`}</span>
                 {openOptions && (
                   <div className="options">
                     <div className="optionItem">
@@ -167,21 +177,21 @@ const Header = ({ type }) => {
                       </div>
                     </div>
                     <div className="optionItem">
-                      <span className="optionText">Room</span>
+                      <span className="optionText">trip</span>
                       <div className="optionCounter">
                         <button
-                          disabled={options.room <= 1}
+                          disabled={options.trip <= 1}
                           className="optionCounterButton"
-                          onClick={() => handleOption("room", "d")}
+                          onClick={() => handleOption("trip", "d")}
                         >
                           -
                         </button>
                         <span className="optionCounterNumber">
-                          {options.room}
+                          {options.trip}
                         </span>
                         <button
                           className="optionCounterButton"
-                          onClick={() => handleOption("room", "i")}
+                          onClick={() => handleOption("trip", "i")}
                         >
                           +
                         </button>

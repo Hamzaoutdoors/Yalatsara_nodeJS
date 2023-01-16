@@ -1,11 +1,19 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit'
 import agenceReducer from './agences/agenceSlice';
+import tripReducer from './trips/tripSlice';
+import authReducer from './auth/authSlice';
+import reservationsReducer from './reservations/reservationsSlice';
 
-const rootReducer = combineReducers({
-    agences: agenceReducer
+const reducer = {
+  agences: agenceReducer,
+  trips: tripReducer,
+  auth: authReducer,
+  reservations: reservationsReducer,
+};
+
+const store = configureStore({
+  reducer,
+  devTools: true
 });
-
-const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;
